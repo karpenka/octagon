@@ -1,1 +1,66 @@
 function octagon()
+%if you want to change something, look for a_max,a_min,a_step(for size of
+%octagon) and the same for L - length of the guide and you need change dir
+%in mcstas part of the function
+
+%guide parameters for geks function
+w=0.03;
+h=0.2;
+i=1;
+j=1;
+%octagon param
+a=0.12;
+L1_max=30;
+L1_min=10;
+L1_step=1;
+L2_max=30;
+L2_min=10;
+L2_step=1;
+%R=0.1;
+%a=0.1;
+%b=0.1;
+%loop
+progressbar('L1','L2');
+k=1;
+l=1;
+lr=1;
+for L = L1_min+L2_min:1:L1_max+L2_max
+    rect(w,h,2*L);
+    [p1,m]=mcstas('LIRA_str.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1, 'mpi',4));
+    p1=p1.Signal;
+    IL(lr) = p1;
+    lr=lr+1;
+end;
+j1=1;
+j2=1;
+for L1 = L1_min:L1_step:L1_max
+for L2 = L2_min:L2_step:L2_max
+    pause(0.001) 
+    geks_ang_2_L1(a,w,h,L);
+    geks_ang_2_L2(a,w,h,L);
+    [p0,m]=mcstas('LIRA_oct.instr',struct('octa_length',L1+L2,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1,'mpi',4));
+    %/home/student/mirror/Kireenko/Dropbox/matlab/octagon/temp/geks_2.m
+    %'mpi',4
+    p=p0.Signal;
+    I(l,k)=p/IL(j1+j2-1);
+    frac1 = ((L1-L1_min)/L1_step+1)/((L1_max-L1_min)/L1_step+1);
+    frac2 = ((L2-L2_min)/L2_step+1)/((L2_max-L2_min)/L2_step+1);
+    progressbar(frac1, frac2);
+    l=l+1;
+    j1=j1+1;
+end;
+    k=k+1;
+    l=1;
+    j1=1;
+    j2=j2+1;
+end;
+dlmwrite('octagon_L1_L2.dat',I,' ');
+LL1=L1_min:L1_step:L1_max;
+LL2=L2_min:L2_step:L2_max;
+%BB=b_min:b_step:b_max;
+[X,Y]=meshgrid(LL1,LL2);
+%for L=L_min:L_step:L_max
+figure;
+surf(X,Y,I)
+savefig('scan_L1_L2.fig');
+end
