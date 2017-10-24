@@ -22,7 +22,7 @@ l=1;
 lr=1;
 for L = L_min:L_step:L_max
     rect(w,h,2*L);
-    [p1,m]=mcstas('LIRA_str.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'compile','yes','dir','/home/konik/Downloads/new/test','overwrite',1, 'mpi',4));
+    [p1,m]=mcstas('LIRA_str.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1, 'mpi',4));
     p1=p1.Signal;
     IL(lr) = p1;
     lr=lr+1;
