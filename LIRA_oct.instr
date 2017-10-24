@@ -128,13 +128,13 @@ COMPONENT Straight_5A2A = Monitor_nD(
 //put octagonal xren suda
 
 COMPONENT geks = Guide_anyshape(
-    geometry = "geks_L1.off",
+    geometry = "geks.off",
     center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
     W = 0.003)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
 COMPONENT geks2 = Guide_anyshape(
-    geometry = "geks_L2.off",
+    geometry = "geks.off",
     center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
     W = 0.003)
   AT (0, 0, octa_length+0.01) RELATIVE arm_geks
