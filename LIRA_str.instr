@@ -106,9 +106,6 @@ COMPONENT Straight_2AA = Monitor_nD(
     xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.2 0.2] dy limits=[-0.6 0.6]")
   AT (0, 0, 50.01) RELATIVE PREVIOUS
 */
-COMPONENT Straight_5AA = Monitor_nD(
-    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
-  AT (0, 0,50.01) RELATIVE Guide_bunker_straight
 /*
 COMPONENT Straight_10AA = Monitor_nD(
     xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-1 1] dy limits=[-3 3]")
