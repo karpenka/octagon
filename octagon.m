@@ -34,6 +34,7 @@ for a = a_min:a_step:a_max
 for L = L_min:L_step:L_max
     pause(0.001) 
     geks_ab(a,b,w,h,L);
+    %geks_ang(a,w,h,L);
     [p0,m]=mcstas('LIRA_oct.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1,'mpi',4));
     %/home/student/mirror/Kireenko/Dropbox/matlab/octagon/temp/geks_2.m
     %'mpi',4
