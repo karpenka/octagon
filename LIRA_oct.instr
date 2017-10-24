@@ -31,7 +31,7 @@ DEFINE INSTRUMENT H3(octa_length=40.01, lambda, guide_m=6,w=0.03,h=0.2)
 DECLARE
 %{
 //temp
-double guide_start_width = w, guide_start_height = h, cold_regime=1;
+double cold_regime=1;
 double source_lambda_max, source_lambda_min;
 
 //[Cold source parameters
@@ -104,11 +104,11 @@ COMPONENT Guide_bunker_straight = Guide_gravity(
 COMPONENT Straight_2AA = Monitor_nD(
     xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.2 0.2] dy limits=[-0.6 0.6]")
   AT (0, 0, 50.01) RELATIVE PREVIOUS
-*/
+
 COMPONENT Straight_5AA = Monitor_nD(
     xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
   AT (0, 0,50.01) RELATIVE Guide_bunker_straight
-/*
+
 COMPONENT Straight_10AA = Monitor_nD(
     xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-1 1] dy limits=[-3 3]")
   AT (0, 0, 0.01) RELATIVE PREVIOUS
@@ -128,13 +128,13 @@ COMPONENT Straight_5A2A = Monitor_nD(
 
 COMPONENT geks = Guide_anyshape(
     geometry = "geks.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = 3,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
     W = 0.003)
   AT (0, -h/2, 0) RELATIVE PREVIOUS
 
 COMPONENT geks2 = Guide_anyshape(
     geometry = "geks.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = 3,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
     W = 0.003)
   AT (h/2, 0, octa_length+0.01) RELATIVE arm_geks
   ROTATED (180,0,90) RELATIVE arm_geks
