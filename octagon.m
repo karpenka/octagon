@@ -40,7 +40,7 @@ for L = L_min:L_step:L_max
     %/home/student/mirror/Kireenko/Dropbox/matlab/octagon/temp/geks_2.m
     %'mpi',4
     p=p0.Signal;
-    I(k,l)=p/IL(l);
+    I(l,k)=p/IL(l);
     frac1 = ((a-a_min)/a_step+1)/((a_max-a_min)/a_step+1);
     %frac2 = ((b-b_min)/b_step+1)/((b_max-b_min)/b_step+1);
     frac2 = ((L-L_min)/L_step+1)/((L_max-L_min)/L_step+1);
