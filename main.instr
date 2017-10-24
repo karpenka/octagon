@@ -26,12 +26,13 @@
 * %End
 *******************************************************************************/
 
-DEFINE INSTRUMENT H3(octa_length=40.01)
+DEFINE INSTRUMENT H3(octa_length=40.01, lambda, guide_m=6,w=0.03,h=0.2)
 
 DECLARE
 %{
 //temp
-double guide_start_width = 0.03, guide_start_height = 0.2, source_lambda_min = 2, source_lambda_max = 20, cold_regime=1;
+double guide_start_width = w, guide_start_height = h, cold_regime=1;
+double source_lambda_max, source_lambda_min;
 
 //[Cold source parameters
 double source_height = 0.2, source_width = 0.12;
@@ -49,10 +50,6 @@ double source_no_I1 = 7.05e12;
 //Distance to neutron guides
 double guide_start_dist = 1.82;
 
-//Guide parameters
-double branch_width = 0.02;
-double shift;
-double R_curv = 850, piece_length = 0.5, rot;
 %}
 
 INITIALIZE
@@ -71,11 +68,8 @@ if (cold_regime==-1){
 	source_I2 = 0;
 	source_I3 = 0;};
 
-//calculate off-axis shift of branch
-shift = (guide_start_width - branch_width)/2;
-
-//calculate curved part parameters
-rot = piece_length/R_curv*RAD2DEG;	
+source_lambda_min = lambda-0.1;
+source_lambda_max = lambda+0.1;
 %}
 
 TRACE
@@ -86,8 +80,8 @@ COMPONENT Origin = Progress_bar()
 //PIK CNS
 
 COMPONENT H3 = Source_gen(
-    dist = guide_start_dist, focus_xw = 0.03,
-    focus_yh = 0.2, I1 = source_I1, yheight = source_height,
+    dist = guide_start_dist, focus_xw = w,
+    focus_yh = h, I1 = source_I1, yheight = source_height,
     xwidth = source_width, T1 = source_T1, Lmin = source_lambda_min,
     Lmax = source_lambda_max, T2 = source_T2, I2 = source_I2, T3 = source_T3,
     I3 = source_I3)
@@ -108,7 +102,7 @@ COMPONENT Guide_bunker_straight = Guide_gravity(
   AT (0, 0, 0) RELATIVE PREVIOUS
 /*
 COMPONENT Straight_2AA = Monitor_nD(
-    xwidth = 0.03, yheight = 0.2, bins = 100, options = "dx limits=[-0.2 0.2] dy limits=[-0.6 0.6]")
+    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.2 0.2] dy limits=[-0.6 0.6]")
   AT (0, 0, 50.01) RELATIVE PREVIOUS
 */
 COMPONENT Straight_5AA = Monitor_nD(
@@ -116,26 +110,21 @@ COMPONENT Straight_5AA = Monitor_nD(
   AT (0, 0,50.01) RELATIVE Guide_bunker_straight
 /*
 COMPONENT Straight_10AA = Monitor_nD(
-    xwidth = 0.03, yheight = 0.2, bins = 100, options = "dx limits=[-1 1] dy limits=[-3 3]")
+    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-1 1] dy limits=[-3 3]")
   AT (0, 0, 0.01) RELATIVE PREVIOUS
 */
 
 COMPONENT arm_geks = Arm(
     )
   AT (0, 0, 50.02) RELATIVE Guide_bunker_straight
+  
 /*
-COMPONENT Guide_bunker_straight2= Guide_gravity(
-    w1 = 0.03, h1 = 0.2, l = 40, mleft = 3, mright = 3,
-    mtop = 3, mbottom = 3, G = -9.81)
-  AT (0, 0, 0) RELATIVE PREVIOUS
-
 COMPONENT Straight_5A2A = Monitor_nD(
-    xwidth = 0.03, yheight = 0.2, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
+    xwidth = w+0.03, yheight = h+0.05, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
   AT (0, 0,40.01) RELATIVE Guide_bunker_straight2
-
 */
-//put octagonal xren suda
 
+//put octagonal xren suda
 
 COMPONENT geks = Guide_anyshape(
     geometry = "geks.off",
@@ -149,13 +138,14 @@ COMPONENT geks2 = Guide_anyshape(
     W = 0.003)
   AT (h/2, 0, octa_length+0.01) RELATIVE arm_geks
   ROTATED (180,0,90) RELATIVE arm_geks
-
-COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-1.5 1.5] dy limits=[-0.5 0.5]")
+  
+  COMPONENT Octo_5AA = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx")
   AT (0, 0, octa_length+0.02) RELATIVE arm_geks
+  
 /*
 COMPONENT monit_xy = Monitor_nD(
-    xwidth = 0.2, yheight = 0.03, bins = 100, options = "x y")
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "x y")
   AT (0, 0, 40.01) RELATIVE arm_geks
 
 /*
@@ -174,7 +164,6 @@ COMPONENT Octo_10AA = Monitor_nD(
 COMPONENT monit_lambda = Monitor_nD(
     xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "lambda limits = [2 20]")
   AT (0, 0, 0.01) RELATIVE PREVIOUS
-
 */
 
 
