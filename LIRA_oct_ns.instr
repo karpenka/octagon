@@ -1,0 +1,175 @@
+/*******************************************************************************
+*         McStas instrument definition URL=http://www.mcstas.org
+*
+* Instrument: PIK H3_3B guide (LIRA instrument)
+*
+* %Identification
+* Written by: P. Konik
+* Date: 11.05.17
+* Origin: PNPI
+* Release: McStas 2.3
+* Version: 1.0
+*
+
+* PIK reactor beamtube H3 facing cold neutron source. Handles additionaly the thermal regime of CNS and no CNS at all situation.
+*
+* %Parameters
+* guide_start_width: [m] Initial width of guide (where to focus neutrons from source)
+* guide_start_height: [m]  Initial height of guide (where to focus neutrons from source)
+* source_lambda_min: [AA] Minimal wavelength to create
+* source_lambda_max: [AA] Maximal wavelength to create
+* cold_regime: [num] 1 corresponds to normal operation, 0 corresponds to thermal regime, -1 corresponds to no container situation
+* m_side: [num] Side wall coating
+* m_outer: [num] Outer side wall coating when guide is curved
+* m_top: [num] Top and bootom wall coating when guide is const cross section
+* m_nose: [num] Top and bottom wall coating when guide is elliptical nose
+*
+* %End
+*******************************************************************************/
+
+DEFINE INSTRUMENT H3(octa_length=40.01, lambda, guide_m=6,w=0.03,h=0.2)
+
+DECLARE
+%{
+//temp
+double cold_regime=1;
+double source_lambda_max, source_lambda_min;
+
+//[Cold source parameters
+double source_height = 0.2, source_width = 0.12;
+double source_I1 = 5.38e12, source_I2= 2.50e12, source_I3 = 9.51e12;
+double source_T1 = 204.6, source_T2 = 73.9; source_T3 = 23.9;
+
+//Thermal regime parameters
+double source_thermal_T1 = 312.2;
+double source_thermal_I1 = 2.25e13;
+
+//No contaiber parameters
+double source_no_T1 = 306.4;
+double source_no_I1 = 7.05e12; 
+
+//Distance to neutron guides
+double guide_start_dist = 1.82;
+
+%}
+
+INITIALIZE
+%{
+//thermal regime of CNS
+if (cold_regime==0){
+	source_T1 = source_thermal_T1;
+	source_I1 = source_thermal_I1;
+	source_I2 = 0;
+	source_I3 = 0;};
+
+//no container presented
+if (cold_regime==-1){
+	source_T1 = source_no_T1;
+	source_I1 = source_no_I1;
+	source_I2 = 0;
+	source_I3 = 0;};
+
+source_lambda_min = lambda-0.1;
+source_lambda_max = lambda+0.1;
+%}
+
+TRACE
+
+COMPONENT Origin = Progress_bar()
+  AT (0,0,0) ABSOLUTE
+
+//PIK CNS
+
+COMPONENT H3 = Source_gen(
+    dist = guide_start_dist, focus_xw = w,
+    focus_yh = h, I1 = source_I1, yheight = source_height,
+    xwidth = source_width, T1 = source_T1, Lmin = source_lambda_min,
+    Lmax = source_lambda_max, T2 = source_T2, I2 = source_I2, T3 = source_T3,
+    I3 = source_I3)
+  AT (0, 0, 0) RELATIVE Origin
+
+//Head collimator
+
+COMPONENT Guide_start_arm = Arm(
+    )
+  AT (0, 0, guide_start_dist) RELATIVE Origin
+
+
+//Curved in-bunker part
+
+COMPONENT Guide_bunker_straight = Guide_gravity(
+    w1 = w, h1 = h, l = 50, mleft = 1, mright = 1,
+    mtop = 3, mbottom = 3, G = -9.81)
+  AT (0, 0, 0) RELATIVE PREVIOUS
+/*
+COMPONENT Straight_2AA = Monitor_nD(
+    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.2 0.2] dy limits=[-0.6 0.6]")
+  AT (0, 0, 50.01) RELATIVE PREVIOUS
+
+COMPONENT Straight_5AA = Monitor_nD(
+    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
+  AT (0, 0,50.01) RELATIVE Guide_bunker_straight
+
+COMPONENT Straight_10AA = Monitor_nD(
+    xwidth = w+0.02, yheight = h+0.05, bins = 100, options = "dx limits=[-1 1] dy limits=[-3 3]")
+  AT (0, 0, 0.01) RELATIVE PREVIOUS
+*/
+
+COMPONENT arm_geks = Arm(
+    )
+  AT (0, 0, 50.02) RELATIVE Guide_bunker_straight
+  
+/*
+COMPONENT Straight_5A2A = Monitor_nD(
+    xwidth = w+0.03, yheight = h+0.05, bins = 100, options = "dx limits=[-0.5 0.5] dy limits=[-1.5 1.5]")
+  AT (0, 0,40.01) RELATIVE Guide_bunker_straight2
+*/
+
+//put octagonal xren suda
+
+COMPONENT geks = Guide_anyshape(
+    geometry = "geks1.off",
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
+    W = 0.003)
+  AT (0, 0, 0) RELATIVE PREVIOUS
+
+COMPONENT geks2 = Guide_anyshape(
+    geometry = "geks2.off",
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
+    W = 0.003)
+  AT (0, 0, octa_length+0.01) RELATIVE arm_geks
+  ROTATED (180,0,90) RELATIVE arm_geks
+  
+  COMPONENT Octo_5AA = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx")
+  AT (0, 0, octa_length+0.02) RELATIVE arm_geks
+  
+/*
+COMPONENT monit_xy = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "x y")
+  AT (0, 0, 40.01) RELATIVE arm_geks
+
+/*
+COMPONENT Octo_2AA = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-0.6 0.6] dy limits=[-0.2 0.2]")
+  AT (0, 0, octa_length) RELATIVE Straight_10AA
+
+COMPONENT Octo_5AA = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-1.5 1.5] dy limits=[-0.5 0.5]")
+  AT (0, 0, 0.01) RELATIVE PREVIOUS
+
+COMPONENT Octo_10AA = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-3 3] dy limits=[-1 1]")
+  AT (0, 0, 0.01) RELATIVE PREVIOUS
+
+COMPONENT monit_lambda = Monitor_nD(
+    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "lambda limits = [2 20]")
+  AT (0, 0, 0.01) RELATIVE PREVIOUS
+*/
+
+
+FINALLY
+%{
+%}
+
+END
