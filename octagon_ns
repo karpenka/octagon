@@ -25,8 +25,8 @@ k=1;
 l=1;
 lr=1;
 for L = L1_min+L2_min:1:L1_max+L2_max
-    rect(w,h,2*L);
-    [p1,m]=mcstas('LIRA_str.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1, 'mpi',4));
+    rect(w,h,L);
+    [p1,m]=mcstas('LIRA_str.instr',struct('octa_length',L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1, 'mpi',4));
     p1=p1.Signal;
     IL(lr) = p1;
     lr=lr+1;
@@ -38,7 +38,7 @@ for L2 = L2_min:L2_step:L2_max
     pause(0.001) 
     geks_ang_2_L1(a,w,h,L);
     geks_ang_2_L2(a,w,h,L);
-    [p0,m]=mcstas('LIRA_oct.instr',struct('octa_length',L1+L2,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1,'mpi',4));
+    [p0,m]=mcstas('LIRA_oct_ns.instr',struct('octa_length',L1+L2,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1,'mpi',4));
     %/home/student/mirror/Kireenko/Dropbox/matlab/octagon/temp/geks_2.m
     %'mpi',4
     p=p0.Signal;
