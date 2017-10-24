@@ -15,6 +15,8 @@ a_step=0.01;
 L_max=30;
 L_min=10;
 L_step=1;
+%a=0.1;
+%b=0.1;
 %loop
 progressbar('a','L');
 k=1;
@@ -28,15 +30,17 @@ for L = L_min:L_step:L_max
     lr=lr+1;
 end;
 for a = a_min:a_step:a_max 
+%for b = b_min:b_step:b_max
 for L = L_min:L_step:L_max
     pause(0.001) 
-    geks(a,w,h,L);
-    [p0,m]=mcstas('LIRA_oct.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/student/mirror/Kireenko/Dropbox/matlab/test','overwrite',1));
-    %/home/student/mirror/Kireenko/Dropbox/matlab/matlab.run
+    geks_ab(a,b,w,h,L);
+    [p0,m]=mcstas('LIRA_oct.instr',struct('octa_length',2*L,'lambda',5,'guide_m',6),struct('ncount',1e5,'dir','/home/konik/Downloads/new/test','overwrite',1,'mpi',4));
+    %/home/student/mirror/Kireenko/Dropbox/matlab/octagon/temp/geks_2.m
     %'mpi',4
     p=p0.Signal;
     I(k,l)=p/IL(l);
     frac1 = ((a-a_min)/a_step+1)/((a_max-a_min)/a_step+1);
+    %frac2 = ((b-b_min)/b_step+1)/((b_max-b_min)/b_step+1);
     frac2 = ((L-L_min)/L_step+1)/((L_max-L_min)/L_step+1);
     progressbar(frac1, frac2);
     l=l+1;
@@ -47,7 +51,9 @@ end;
 dlmwrite('octagon.dat',I,' ');
 aa=a_min:a_step:a_max;
 LL=L_min:L_step:L_max;
+%BB=b_min:b_step:b_max;
 [X,Y]=meshgrid(aa,LL);
+%[X,Y]=meshgrid(aa,BB);
 for L=L_min:L_step:L_max
 figure;
 surf(X,Y,I)
