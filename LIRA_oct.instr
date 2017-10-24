@@ -141,7 +141,7 @@ COMPONENT geks2 = Guide_anyshape(
   ROTATED (180,0,90) RELATIVE arm_geks
   
   COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx")
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] dx")
   AT (0, 0, octa_length+0.02) RELATIVE arm_geks
   
 /*
