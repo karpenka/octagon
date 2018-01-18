@@ -27,7 +27,7 @@
 * %End
 *******************************************************************************/
 
-DEFINE INSTRUMENT H3(octa_length=40.01, lambda, guide_m=6,w=0.03,h=0.2)
+DEFINE INSTRUMENT H3(L0 = 10, L1 = 10, lambda = 5, guide_m=6, w=0.03, h=0.2)
 
 DECLARE
 %{
@@ -133,16 +133,9 @@ COMPONENT geks = Guide_anyshape(
     W = 0.003)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
-COMPONENT geks2 = Guide_anyshape(
-    geometry = "geks.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
-    W = 0.003)
-  AT (0, 0, octa_length+0.01) RELATIVE arm_geks
-  ROTATED (180,0,90) RELATIVE arm_geks
-  
   COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] dx")
-  AT (0, 0, octa_length+0.02) RELATIVE arm_geks
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
+  AT (0, 0, 2*L0+L1+0.001) RELATIVE arm_geks
   
 /*
 COMPONENT monit_xy = Monitor_nD(
@@ -173,3 +166,4 @@ FINALLY
 %}
 
 END
+
