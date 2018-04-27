@@ -27,12 +27,11 @@
 * %End
 *******************************************************************************/
 
-DEFINE INSTRUMENT H3(L=10, guide_m=6,w=0.03,h=0.2,phi=2)
+DEFINE INSTRUMENT H3(L=2, guide_m=6,w=0.03,h=0.2,phi=2, lambda = 5)
 
 DECLARE
 %{
 //temp
-double lambda =5;
 double cold_regime=1;
 double source_lambda_max, source_lambda_min;
 
@@ -99,7 +98,7 @@ COMPONENT Guide_start_arm = Arm(
 //Curved in-bunker part
 
 COMPONENT Guide_bunker_straight = Guide_gravity(
-    w1 = w, h1 = h, l = 50, mleft = 1, mright = 1,
+    w1 = w, h1 = h, l = 25, mleft = 1, mright = 1,
     mtop = 3, mbottom = 3, G = -9.81)
   AT (0, 0, 0) RELATIVE PREVIOUS
 /*
@@ -118,7 +117,7 @@ COMPONENT Straight_10AA = Monitor_nD(
 
 COMPONENT arm_geks = Arm(
     )
-  AT (0, 0, 50.02) RELATIVE Guide_bunker_straight
+  AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
   
 /*
 COMPONENT Straight_5A2A = Monitor_nD(
@@ -130,7 +129,7 @@ COMPONENT Straight_5A2A = Monitor_nD(
 
 COMPONENT screw = Guide_anyshape(
     geometry = "screw.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
     W = 0.003)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
@@ -318,36 +317,19 @@ COMPONENT COPY(screw) = COPY(screw)()
   AT (0, 0, L+0.0001) RELATIVE PREVIOUS
   ROTATED (0,0,phi) RELATIVE PREVIOUS
   
-  COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
+
+  COMPONENT Octo_large = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-1.5 1.5] ")
   AT (0, 0, L+0.02) RELATIVE PREVIOUS
  ROTATED (0,0,90) RELATIVE PREVIOUS
 
+  COMPONENT Octo_medium = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
+  AT (0, 0, 0.0001) RELATIVE PREVIOUS
 
-  
-/*
-COMPONENT monit_xy = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "x y")
-  AT (0, 0, 40.01) RELATIVE arm_geks
-
-/*
-COMPONENT Octo_2AA = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-0.6 0.6] dy limits=[-0.2 0.2]")
-  AT (0, 0, octa_length) RELATIVE Straight_10AA
-
-COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-1.5 1.5] dy limits=[-0.5 0.5]")
-  AT (0, 0, 0.01) RELATIVE PREVIOUS
-
-COMPONENT Octo_10AA = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-3 3] dy limits=[-1 1]")
-  AT (0, 0, 0.01) RELATIVE PREVIOUS
-
-COMPONENT monit_lambda = Monitor_nD(
-    xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "lambda limits = [2 20]")
-  AT (0, 0, 0.01) RELATIVE PREVIOUS
-*/
-
+  COMPONENT Octo_small = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.1 0.1] ")
+  AT (0, 0, 0.0001) RELATIVE PREVIOUS
 
 FINALLY
 %{

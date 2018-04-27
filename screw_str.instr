@@ -26,12 +26,11 @@
 * %End
 *******************************************************************************/
 
-DEFINE INSTRUMENT H3(L=45, guide_m=6,w=0.03,h=0.2)
+DEFINE INSTRUMENT H3(L=45, guide_m=6,w=0.03,h=0.2,lambda=5)
 
 DECLARE
 %{
 //temp
-double  lambda = 5;
 double cold_regime=1;
 //guide_start_width = 0.03, guide_start_height = 0.2, 
 double source_lambda_max, source_lambda_min;
@@ -99,7 +98,7 @@ COMPONENT Guide_start_arm = Arm(
 //Curved in-bunker part
 
 COMPONENT Guide_bunker_straight = Guide_gravity(
-    w1 = w, h1 = h, l = 50, mleft = 1, mright = 1,
+    w1 = w, h1 = h, l = 25, mleft = 1, mright = 1,
     mtop = 3, mbottom = 3, G = -9.81)
   AT (0, 0, 0) RELATIVE PREVIOUS
 /*
@@ -115,7 +114,7 @@ COMPONENT Straight_10AA = Monitor_nD(
 
 COMPONENT arm_geks = Arm(
     )
-  AT (0, 0, 50.02) RELATIVE Guide_bunker_straight
+  AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
   
 /*
 COMPONENT Straight_5A2A = Monitor_nD(
@@ -127,20 +126,27 @@ COMPONENT Straight_5A2A = Monitor_nD(
 
 COMPONENT geks = Guide_anyshape(
     geometry = "rectangle.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
     W = 0.003)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
-COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = w, yheight = h, bins = 100, options = "dx limits=[-0.5 0.5]")
+COMPONENT Octo_large = Monitor_nD(
+    xwidth = w, yheight = h, bins = 100, options = "dx limits=[-1.5 1.5]")
   AT (0, 0, L+0.02) RELATIVE arm_geks
+
+COMPONENT Octo_medium = Monitor_nD(
+    xwidth = w, yheight = h, bins = 100, options = "dx limits = [-0.5 0.5] ")
+  AT (0, 0, 0.0001) RELATIVE PREVIOUS
+
+COMPONENT Octo_small = Monitor_nD(
+    xwidth = w, yheight = h, bins = 100, options = "dx limits = [-0.1 0.1] ")
+  AT (0, 0, 0.0001) RELATIVE PREVIOUS
   
 /*
 COMPONENT monit_xy = Monitor_nD(
     xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "x y")
   AT (0, 0, 40.01) RELATIVE arm_geks
 
-/*
 COMPONENT Octo_2AA = Monitor_nD(
     xwidth = h+0.05, yheight = w+0.03, bins = 100, options = "dx limits=[-0.6 0.6] dy limits=[-0.2 0.2]")
   AT (0, 0, octa_length) RELATIVE Straight_10AA

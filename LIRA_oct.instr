@@ -27,7 +27,7 @@
 * %End
 *******************************************************************************/
 
-DEFINE INSTRUMENT H3(L0 = 10, L1 = 10, lambda = 5, guide_m=6, w=0.03, h=0.2)
+DEFINE INSTRUMENT H3(L0 = 20, L1 = 20, lambda = 5, guide_m=6, w=0.03, h=0.2)
 
 DECLARE
 %{
@@ -98,7 +98,7 @@ COMPONENT Guide_start_arm = Arm(
 //Curved in-bunker part
 
 COMPONENT Guide_bunker_straight = Guide_gravity(
-    w1 = w, h1 = h, l = 50, mleft = 1, mright = 1,
+    w1 = w, h1 = h, l = 25, mleft = 1, mright = 1,
     mtop = 3, mbottom = 3, G = -9.81)
   AT (0, 0, 0) RELATIVE PREVIOUS
 /*
@@ -117,7 +117,7 @@ COMPONENT Straight_10AA = Monitor_nD(
 
 COMPONENT arm_geks = Arm(
     )
-  AT (0, 0, 50.02) RELATIVE Guide_bunker_straight
+  AT (0, 0, 25.02) RELATIVE Guide_bunker_straight
   
 /*
 COMPONENT Straight_5A2A = Monitor_nD(
@@ -129,13 +129,21 @@ COMPONENT Straight_5A2A = Monitor_nD(
 
 COMPONENT geks = Guide_anyshape(
     geometry = "geks.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3, m = guide_m,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
     W = 0.003)
-  AT (0, 0, 0) RELATIVE PREVIOUS
+  AT (0, 0, 0) RELATIVE arm_geks
 
-  COMPONENT Octo_5AA = Monitor_nD(
-    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
+  COMPONENT Octo_large = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-1.5 1.5] ")
   AT (0, 0, 2*L0+L1+0.001) RELATIVE arm_geks
+
+  COMPONENT Octo_medium = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.5 0.5] ")
+  AT (0, 0, 0.001) RELATIVE PREVIOUS
+
+  COMPONENT Octo_small = Monitor_nD(
+    xwidth = h, yheight = w, bins = 100, options = "dy limits = [-0.1 0.1] ")
+  AT (0, 0, 0.0001) RELATIVE PREVIOUS
   
 /*
 COMPONENT monit_xy = Monitor_nD(
@@ -166,4 +174,6 @@ FINALLY
 %}
 
 END
+
+
 
