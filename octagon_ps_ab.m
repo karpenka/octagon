@@ -41,7 +41,7 @@ k=1;
 l=1;
 lr=1;
 rect(w,h,2*L0+L1);
-[p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',2*L0+L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
+[p0,m0]=mcstas('screw_str.instr',struct('lambda',lambda,'L',2*L0+L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
 p0l=p0(1,:,:).Signal;
 p0m=p0(2,:,:).Signal;
 p0s=p0(3,:,:).Signal;
@@ -53,8 +53,8 @@ progressbar('a','b');
 for a = a_min:a_step:a_max
 for b = b_min:b_step:b_max
     pause(0.0001)
-    geks_ps(a,b,w,h,L0,L1);
-    [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L0,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
+    geks_ps_rotated(a,b,w,h,L0,L1);
+    [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',L0,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount));
     p1l=p1(1,:,:).Signal;
     p1m=p1(2,:,:).Signal;
     p1s=p1(3,:,:).Signal;
@@ -70,18 +70,18 @@ end
     l=1;
 end
 
-dlmwrite(join([join(['oct_ab','lambda',string(lambda),'l'],'_'),'.dat'],''),Il,' ');
-dlmwrite(join([join(['oct_ab','lambda',string(lambda),'m'],'_'),'.dat'],''),Im,' ');
-dlmwrite(join([join(['oct_ab','lambda',string(lambda),'s'],'_'),'.dat'],''),Is,' ');
+dlmwrite(join([join(['oct_ab2','lambda',string(lambda),'l'],'_'),'.dat'],''),Il,' ');
+dlmwrite(join([join(['oct_ab2','lambda',string(lambda),'m'],'_'),'.dat'],''),Im,' ');
+dlmwrite(join([join(['oct_ab2','lambda',string(lambda),'s'],'_'),'.dat'],''),Is,' ');
 aa=a_min:a_step:a_max;
 bb=b_min:b_step:b_max;
 [X,Y]=meshgrid(aa,bb);
 figure;
 surf(X,Y,Il)
-savefig(join(['oct_ab','lambda',string(lambda),'l'],'_'));
+savefig(join(['oct_ab3','lambda',string(lambda),'l'],'_'));
 figure;
 surf(X,Y,Im)
-savefig(join(['oct_ab','lambda',string(lambda),'m'],'_'));
+savefig(join(['oct_ab3','lambda',string(lambda),'m'],'_'));
 figure;
 surf(X,Y,Is)
-savefig(join(['oct_ab','lambda',string(lambda),'s'],'_'));
+savefig(join(['oct_ab3','lambda',string(lambda),'s'],'_'));

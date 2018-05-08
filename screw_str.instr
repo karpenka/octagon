@@ -126,8 +126,10 @@ COMPONENT Straight_5A2A = Monitor_nD(
 
 COMPONENT geks = Guide_anyshape(
     geometry = "rectangle.off",
-    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
+    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 3.1, m = guide_m,
     W = 0.003)
+//    center = 0, R0 = 0.99, Qc = 0.0219, alpha = 2.3, m = guide_m,
+//    W = 0.003)
   AT (0, 0, 0) RELATIVE PREVIOUS
 
 COMPONENT Octo_large = Monitor_nD(
@@ -170,5 +172,6 @@ FINALLY
 %}
 
 END
+
 
 
