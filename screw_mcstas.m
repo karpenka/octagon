@@ -17,14 +17,14 @@ optargs(1:numvarargs) = varargin;
 [f, m, ncount] = optargs{:};
 %guide parameters for geks function
 w = 0.03;
-h = 0.1;
+h = 0.2;
 i = 1;
 j = 1;
 %loop
 lr = 1;
-L_min = 10/45;
+L_min = 5/45;
 L_step = 5/45;
-L_max = 100/45;
+L_max = 50/45;
 for L = L_min:L_step:L_max
     screw(w,h,L,f);
     rect(w,h,L*45);
@@ -57,18 +57,30 @@ end
 % end
 % f = phi_min:phi_step:phi_max;
 % plot(f,I);
-L = L_min:L_step:L_max;
+L = L_min*45:L_step*45:L_max*45;
 dlmwrite(join([join(['screw','lambda',string(lambda),'l'],'_'),'.dat'],''),Il,' ');
 dlmwrite(join([join(['screw','lambda',string(lambda),'m'],'_'),'.dat'],''),Im,' ');
 dlmwrite(join([join(['screw','lambda',string(lambda),'s'],'_'),'.dat'],''),Is,' ');
 figure;
 plot(L,Il)
+xlabel('Length [m]')
+ylabel('I_{screw}/I_{straight}')
+title(join(['Divergence = \pm1.5\circ, ','lambda = ',string(lambda)]))
+grid on
 savefig(join(['screw','lambda',string(lambda),'l'],'_'));
 figure;
 plot(L,Im)
+xlabel('Length [m]')
+ylabel('I_{screw}/I_{straight}')
+title(join(['Divergence = \pm0.5\circ, ','lambda = ',string(lambda)]))
+grid on
 savefig(join(['screw','lambda',string(lambda),'m'],'_'));
 figure;
 plot(L,Is)
+xlabel('Length [m]')
+ylabel('I_{screw}/I_{straight}')
+title(join(['Divergence = \pm0.1\circ, ','lambda = ',string(lambda)]))
+grid on
 savefig(join(['screw','lambda',string(lambda),'s'],'_'));
 % aa=a_min:a_step:a_max;
 % [X,Y]=meshgrid(aa,LL);

@@ -1,4 +1,4 @@
-function octagon_ps_LL(lambda,varargin)
+function octagon_ps_LL_r(lambda,varargin)
 %parameters varargin -> f = -2, m = 6, ncount = 1e5
 numvarargs = length(varargin);
 if numvarargs > 3
@@ -23,8 +23,8 @@ optargs(1:numvarargs) = varargin;
 %guide parameters for geks function
 w = 0.03;
 h = 0.1;
-a = 0.07;
-b = 0.05;
+a = 0.04;
+b = 0.03;
 L_min = 5;
 L_step = 5;
 L_max = 105;
@@ -54,7 +54,7 @@ for L = L_min:L_step:L_max
     I0s(k) = p0s;
 for L1 = L1_min:L1_step:L1_max
     pause(0.0001)
-    geks_ps(a,b,w,h,(L-L1)/2,L1);
+    geks_ps_rotated(a,b,w,h,(L-L1)/2,L1);
     [p1,m1]=mcstas('LIRA_oct.instr',struct('lambda',lambda,'L0',(L-L1)/2,'L1',L1,'guide_m',m,'w',w,'h',h),struct('ncount',ncount,'mpi',4));
     p1l=p1(1,:,:).Signal;
     p1m=p1(2,:,:).Signal;
@@ -71,9 +71,9 @@ end
     l=1;
 end   
 
-dlmwrite(join([join(['oct_LL','lambda',string(lambda),'l'],'_'),'.dat'],''),Il,' ');
-dlmwrite(join([join(['oct_LL','lambda',string(lambda),'m'],'_'),'.dat'],''),Im,' ');
-dlmwrite(join([join(['oct_LL','lambda',string(lambda),'s'],'_'),'.dat'],''),Is,' ');
+dlmwrite(join([join(['oct_LL_r','lambda',string(lambda),'l'],'_'),'.dat'],''),Il,' ');
+dlmwrite(join([join(['oct_LL_r','lambda',string(lambda),'m'],'_'),'.dat'],''),Im,' ');
+dlmwrite(join([join(['oct_LL_r','lambda',string(lambda),'s'],'_'),'.dat'],''),Is,' ');
 LL = L_min:L_step:L_max;
 LL1 = L1_mi:L1_st:L1_ma;
 [X,Y]=meshgrid(LL,LL1);
@@ -83,18 +83,18 @@ xlabel('L_{tot} [m]')
 ylabel('L_{cen} [%]')
 zlabel('I_{oct}/I_{str}')
 title(join(['Divergence = \pm1.5\circ, ','lambda = ',string(lambda)]))
-savefig(join(['oct_LL','lambda',string(lambda),'l'],'_'));
+savefig(join(['oct_LL_r','lambda',string(lambda),'l'],'_'));
 figure;
 surf(X,Y,Im)
 xlabel('L_{tot} [m]')
 ylabel('L_{cen} [%]')
 zlabel('I_{oct}/I_{str}')
 title(join(['Divergence = \pm0.5\circ, ','lambda = ',string(lambda)]))
-savefig(join(['oct_LL','lambda',string(lambda),'m'],'_'));
+savefig(join(['oct_LL_r','lambda',string(lambda),'m'],'_'));
 figure;
 surf(X,Y,Is)
 xlabel('L_{tot} [m]')
 ylabel('L_{cen} [%]')
 zlabel('I_{oct}/I_{str}')
 title(join(['Divergence = \pm0.1\circ, ','lambda = ',string(lambda)]))
-savefig(join(['oct_LL','lambda',string(lambda),'s'],'_'));
+savefig(join(['oct_LL_r','lambda',string(lambda),'s'],'_'));
